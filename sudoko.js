@@ -43,7 +43,25 @@ class Sudoko {
   }
 
   getSector (i, j) {
-    return this.sqrt * Math.floor(i/this.sqrt) + Math.floor(j/this.sqrt)
+    let diff = 0
+
+    if (i%this.sqrt === 0) {
+      diff = -1
+    }
+
+    if (i%this.sqrt === this.sqrt - 1) {
+      diff = 1
+    }
+
+    let newJ = j
+
+    if ((j + diff) > 0 && (j + diff) < this.n) {
+      newJ = j + diff
+    }
+
+    const sector = this.sqrt * Math.floor(i/this.sqrt) + Math.floor(newJ/this.sqrt)
+
+    return sector
   }
 
   print() {
@@ -129,18 +147,29 @@ class Sudoko {
 
 if (require.main === module) {
   const grid = [
-    [4, 1, 9, 0, 8, 0, 0, 0, 0],
-    [5, 0, 8, 0, 0, 0, 0, 0, 6],
-    [0, 0, 0, 5, 0, 0, 0, 0, 0],
-    [0, 9, 0, 6, 0, 0, 0, 0, 4],
-    [0, 4, 0, 0, 0, 0, 0, 0, 3],
-    [6, 0, 0, 2, 9, 0, 0, 8, 0],
-    [0, 0, 2, 3, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 9, 2, 5, 0],
-    [0, 7, 0, 0, 0, 0, 0, 0, 0]
+    [ 0, 0, 0, 2, 4, 8, 5, 0, 0 ],
+    [ 0, 4, 9, 0, 6, 0, 0, 0, 0 ],
+    [ 0, 8, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 6, 0, 0, 0, 0, 2 ],
+    [ 0, 0, 0, 0, 0, 0, 3, 0, 0 ],
+    [ 0, 5, 0, 8, 3, 0, 0, 7, 0 ],
+    [ 0, 1, 0, 0, 0, 0, 0, 9, 0 ],
+    [ 2, 0, 0, 0, 9, 0, 7, 5, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 8 ]
   ]
 
   const sudoku = new Sudoko(9, grid)
+
+  console.log('sectors:')
+  let out = ''
+  for (let i = 0; i < sudoku.n; i++) {
+    for (let j = 0; j < sudoku.n; j++) {
+      out += `${sudoku.getSector(i, j)} `
+    }
+    out += '\n'
+  }
+  console.log(out)
+
   console.log('sudoku:')
   sudoku.print()
   if (sudoku.solve()) {
