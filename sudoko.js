@@ -4,13 +4,14 @@ class Sudoko {
    * @param {Integer} n size of the grid should be
    * @param {Integer[][]} grid sudoku grid as 2d array
    */
-  constructor(n, grid) {
+  constructor(n, grid, chars) {
     const sqrt = Math.sqrt(n)
 
     if (n % sqrt !== 0) {
       throw new Error('Size should be perfect square')
     }
 
+    this.chars = chars
     this.n = n
     this.sqrt = sqrt
     this.grid = []
@@ -28,9 +29,6 @@ class Sudoko {
       this.grid.push([])
       for (let j = 0; j < n; j++) {
         const num = grid[i][j]
-        if (num < 0 || num > n) {
-          throw new Error('number must be between 0 and n')
-        }
         this.grid[i][j] = num || 0
 
         if (num) {
@@ -58,10 +56,6 @@ class Sudoko {
   }
 
   solve() {
-    // remove to make solving faster
-    console.clear()
-    this.print()
-
     const free = this.findFirstFree()
 
     if (!free) {
@@ -70,7 +64,8 @@ class Sudoko {
 
     const {x, y} = free
 
-    for (let num = 1; num <= this.n; num++) {
+    for (let i = 0; i <= this.chars.length; i++) {
+      const num = this.chars[i]
       if (this.isValid(num, x, y)) {
         this.set(num, x, y)
 
@@ -133,21 +128,30 @@ class Sudoko {
 
 if (require.main === module) {
   const grid = [
-    [4, 1, 9, 0, 8, 0, 0, 0, 0],
-    [5, 0, 8, 0, 0, 0, 0, 0, 6],
-    [0, 0, 0, 5, 0, 0, 0, 0, 0],
-    [0, 9, 0, 6, 0, 0, 0, 0, 4],
-    [0, 4, 0, 0, 0, 0, 0, 0, 3],
-    [6, 0, 0, 2, 9, 0, 0, 8, 0],
-    [0, 0, 2, 3, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 9, 2, 5, 0],
-    [0, 7, 0, 0, 0, 0, 0, 0, 0]
+    [ 0, 0, 'J', 'E', 'I', 'A', 0, 0, 0, 0, 'G', 'O', 'N', 'M', 0, 0 ],
+    [ 'G', 0, 'P', 'I', 'B', 'K', 'J', 'H', 0, 0, 0, 0, 'F', 'A', 0, 'O' ],
+    [ 0, 0, 'F', 0, 'D', 0, 'E', 'G', 0, 'B', 'P', 0, 'L', 0, 'K', 'C' ],
+    [ 0, 0, 0, 'H', 'M', 'O', 0, 'L', 'F', 'K', 'E', 'A', 'P', 'G', 0, 'J' ],
+    [ 'B', 'P', 'G', 'K', 0, 'D', 'F', 'J', 0, 0, 'N', 'I', 'A', 0, 0, 'H' ],
+    [ 'E', 'M', 0, 'C', 'O', 'B', 'I', 'P', 'A', 0, 'H', 'F', 0, 'D', 'N', 0 ],
+    [ 'D', 'I', 'H', 0, 0, 0, 'N', 'E', 'K', 'G', 'C', 'P', 'J', 0, 'M', 'F' ],
+    [ 'F', 'N', 0, 0, 0, 'M', 'G', 0, 0, 0, 0, 'L', 'I', 'E', 0, 'P' ],
+    [ 0, 'J', 'M', 0, 'N', 'E', 'K', 'D', 0, 0, 'L', 'C', 'H', 0, 0, 0 ],
+    [ 'I', 'D', 0, 'G', 0, 0, 'M', 'A', 'J', 'P', 0, 'N', 0, 0, 'B', 'L' ],
+    [ 'L', 'A', 'C', 0, 0, 'G', 'O', 'I', 'B', 0, 0, 0, 0, 0, 'J', 'D' ],
+    [ 'P', 0, 'K', 'N', 'L', 'J', 0, 0, 'E', 'F', 0, 'D', 0, 'O', 'A', 'G' ],
+    [ 'A', 'F', 0, 'L', 'K', 0, 'H', 'B', 'D', 'O', 0, 0, 0, 'I', 'G', 'M' ],
+    [ 0, 'E', 0, 'D', 'J', 'I', 0, 0, 'P', 'C', 'F', 'G', 'O', 'K', 'L', 0 ],
+    [ 0, 0, 'O', 'P', 'E', 'C', 'D', 0, 'L', 'I', 'M', 0, 0, 'F', 'H', 0 ],
+    [ 'K', 'C', 0, 'M', 0, 'F', 0, 0, 'N', 'H', 0, 0, 0, 'J', 'P', 'E' ]
   ]
 
-  const sudoku = new Sudoko(9, grid)
+  const chars = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P']
+
+  const sudoku = new Sudoko(16, grid, chars)
   sudoku.print()
   if (sudoku.solve()) {
-    console.clear()
     sudoku.print()
+    console.log(sudoku.grid)
   }
 }
