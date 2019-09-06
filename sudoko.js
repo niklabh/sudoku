@@ -149,9 +149,12 @@ if (require.main === module) {
   const chars = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P']
 
   const sudoku = new Sudoko(16, grid, chars)
+  console.log('sudoku:')
   sudoku.print()
   if (sudoku.solve()) {
+    console.log('solution:')
     sudoku.print()
-    console.log(sudoku.grid)
+  } else {
+    console.log('no solution')
   }
 }
