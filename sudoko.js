@@ -118,6 +118,14 @@ class Sudoko {
       return false
     }
 
+    if (this.diagonal1[num]) {
+      return false
+    }
+
+    if (this.diagonal2[num]) {
+      return false
+    }
+
     return true
   }
 
