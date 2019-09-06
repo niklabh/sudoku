@@ -58,10 +58,6 @@ class Sudoko {
   }
 
   solve() {
-    // remove to make solving faster
-    console.clear()
-    this.print()
-
     const free = this.findFirstFree()
 
     if (!free) {
@@ -145,9 +141,12 @@ if (require.main === module) {
   ]
 
   const sudoku = new Sudoko(9, grid)
+  console.log('sudoku:')
   sudoku.print()
   if (sudoku.solve()) {
-    console.clear()
+    console.log('solution:')
     sudoku.print()
+  } else {
+    console.log('no solution')
   }
 }
