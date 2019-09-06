@@ -4,7 +4,7 @@ class Sudoko {
    * @param {Integer} n size of the grid should be
    * @param {Integer[][]} grid sudoku grid as 2d array
    */
-  constructor(n, grid) {
+  constructor(n, grid, subsectorBorder) {
     const sqrt = Math.sqrt(n)
 
     if (n % sqrt !== 0) {
@@ -13,15 +13,21 @@ class Sudoko {
 
     this.n = n
     this.sqrt = sqrt
+    this.subsectorBorder = subsectorBorder
     this.grid = []
     this.x = []  // row maps of numbers
     this.y = []  // column maps of number
     this.sector = [] // sector maps of numbers
+    this.subsector = [] // subsector maps of numbers
 
     for (let i = 0; i < n; i++) {
       this.x.push({})
       this.y.push({})
       this.sector.push({})
+    }
+
+    for (let i = 0; i < subsectorBorder.length; i++) {
+      this.subsector.push({})
     }
 
     for (let i = 0; i < n; i++) {
@@ -37,6 +43,11 @@ class Sudoko {
           this.x[i][num] = true
           this.y[j][num] = true
           this.sector[this.getSector(i, j)][num] = true
+
+          const subsector = getSubsector(i, j)
+          if (!isNaN(subsector)) {
+            this.subsector[subsector][num] = true
+          }
         }
       }
     }
@@ -44,6 +55,20 @@ class Sudoko {
 
   getSector (i, j) {
     return this.sqrt * Math.floor(i/this.sqrt) + Math.floor(j/this.sqrt)
+  }
+
+  getSubsector (i, j) {
+    for (let s = 0; s < this.subsectorBorder.length; s++) {
+
+      if (
+        i >= this.subsectorBorder[s].x &&
+        i < this.subsectorBorder[s].x + this.sqrt &&
+        j >= this.subsectorBorder[s].y &&
+        j < this.subsectorBorder[s].y + this.sqrt
+      ) {
+        return s
+      }
+    }
   }
 
   print() {
@@ -108,6 +133,12 @@ class Sudoko {
       return false
     }
 
+    const subsector = getSubsector(x, y)
+
+    if (this.subsector[subsector][num]) {
+      return false
+    }
+
     return true
   }
 
@@ -115,14 +146,24 @@ class Sudoko {
     const prev = this.grid[x][y]
     this.grid[x][y] = num
 
+    const subsector = getSubsector(x, y)
+
     if (num !== 0) {
       this.x[x][num] = true
       this.y[y][num] = true
       this.sector[this.getSector(x, y)][num] = true
+
+      if (!isNaN(subsector)) {
+        this.subsector[subsector][num] = true
+      }
     } else {
       this.x[x][prev] = false
       this.y[y][prev] = false
       this.sector[this.getSector(x, y)][prev] = false
+
+      if (!isNaN(subsector)) {
+        this.subsector[subsector][prev] = false
+      }
     }
   }
 }
@@ -140,13 +181,14 @@ if (require.main === module) {
     [0, 7, 0, 0, 0, 0, 0, 0, 0]
   ]
 
-  const sudoku = new Sudoko(9, grid)
-  console.log('sudoku:')
-  sudoku.print()
-  if (sudoku.solve()) {
-    console.log('solution:')
-    sudoku.print()
-  } else {
-    console.log('no solution')
-  }
+  const n = 9
+  const sqrt = Math.sqrt(n)
+
+  // start of subsectors
+  const subsectors = [
+    {x: 1, y: 1},
+    {x: 1, y: 2 + sqrt},
+    {x: 2 + sqrt, y: 1},
+    {x: 2 + sqrt, y: 2 + sqrt},
+  ]
 }
