@@ -17,6 +17,8 @@ class Sudoko {
     this.x = []  // row maps of numbers
     this.y = []  // column maps of number
     this.sector = [] // sector maps of numbers
+    this.diagonal1 = {} // diagonal 1
+    this.diagonal2 = {} // diagonal 2
 
     for (let i = 0; i < n; i++) {
       this.x.push({})
@@ -37,6 +39,14 @@ class Sudoko {
           this.x[i][num] = true
           this.y[j][num] = true
           this.sector[this.getSector(i, j)][num] = true
+
+          if (i === j) {
+            this.diagonal1[num] = true
+          }
+
+          if (i === this.n - j) {
+            this.diagonal2[num] = true
+          }
         }
       }
     }
@@ -58,10 +68,6 @@ class Sudoko {
   }
 
   solve() {
-    // remove to make solving faster
-    console.clear()
-    this.print()
-
     const free = this.findFirstFree()
 
     if (!free) {
@@ -123,31 +129,50 @@ class Sudoko {
       this.x[x][num] = true
       this.y[y][num] = true
       this.sector[this.getSector(x, y)][num] = true
+
+      if (x === y) {
+        this.diagonal1[num] = true
+      }
+
+      if (x === this.n - y) {
+        this.diagonal2[num] = true
+      }
     } else {
       this.x[x][prev] = false
       this.y[y][prev] = false
       this.sector[this.getSector(x, y)][prev] = false
+
+      if (x === y) {
+        this.diagonal1[prev] = false
+      }
+
+      if (x === this.n - y) {
+        this.diagonal2[prev] = false
+      }
     }
   }
 }
 
 if (require.main === module) {
   const grid = [
-    [4, 1, 9, 0, 8, 0, 0, 0, 0],
-    [5, 0, 8, 0, 0, 0, 0, 0, 6],
-    [0, 0, 0, 5, 0, 0, 0, 0, 0],
-    [0, 9, 0, 6, 0, 0, 0, 0, 4],
-    [0, 4, 0, 0, 0, 0, 0, 0, 3],
-    [6, 0, 0, 2, 9, 0, 0, 8, 0],
-    [0, 0, 2, 3, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 9, 2, 5, 0],
-    [0, 7, 0, 0, 0, 0, 0, 0, 0]
+    [ 1, 0, 0, 5, 0, 0, 0, 3, 0 ],
+    [ 2, 0, 0, 0, 7, 0, 0, 0, 1 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 8 ],
+    [ 6, 0, 0, 0, 0, 5, 0, 0, 0 ],
+    [ 0, 0, 0, 2, 0, 3, 9, 0, 0 ],
+    [ 0, 9, 3, 0, 0, 0, 0, 7, 0 ],
+    [ 0, 0, 4, 0, 0, 0, 0, 0, 0 ],
+    [ 8, 0, 7, 0, 0, 0, 5, 0, 0 ],
+    [ 3, 0, 0, 0, 4, 2, 0, 0, 0 ]
   ]
 
   const sudoku = new Sudoko(9, grid)
+  console.log('sudoku:')
   sudoku.print()
   if (sudoku.solve()) {
-    console.clear()
+    console.log('solution:')
     sudoku.print()
+  } else {
+    console.log('no solution')
   }
 }
