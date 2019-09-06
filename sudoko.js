@@ -44,7 +44,7 @@ class Sudoko {
           this.y[j][num] = true
           this.sector[this.getSector(i, j)][num] = true
 
-          const subsector = getSubsector(i, j)
+          const subsector = this.getSubsector(i, j)
           if (!isNaN(subsector)) {
             this.subsector[subsector][num] = true
           }
@@ -133,9 +133,9 @@ class Sudoko {
       return false
     }
 
-    const subsector = getSubsector(x, y)
+    const subsector = this.getSubsector(x, y)
 
-    if (this.subsector[subsector][num]) {
+    if (subsector && this.subsector[subsector][num]) {
       return false
     }
 
@@ -146,7 +146,7 @@ class Sudoko {
     const prev = this.grid[x][y]
     this.grid[x][y] = num
 
-    const subsector = getSubsector(x, y)
+    const subsector = this.getSubsector(x, y)
 
     if (num !== 0) {
       this.x[x][num] = true
@@ -170,15 +170,15 @@ class Sudoko {
 
 if (require.main === module) {
   const grid = [
-    [4, 1, 9, 0, 8, 0, 0, 0, 0],
-    [5, 0, 8, 0, 0, 0, 0, 0, 6],
-    [0, 0, 0, 5, 0, 0, 0, 0, 0],
-    [0, 9, 0, 6, 0, 0, 0, 0, 4],
-    [0, 4, 0, 0, 0, 0, 0, 0, 3],
-    [6, 0, 0, 2, 9, 0, 0, 8, 0],
-    [0, 0, 2, 3, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 9, 2, 5, 0],
-    [0, 7, 0, 0, 0, 0, 0, 0, 0]
+    [ 0, 2, 0, 0, 0, 0, 3, 9, 0 ],
+    [ 9, 0, 0, 0, 0, 0, 8, 0, 0 ],
+    [ 0, 1, 0, 0, 5, 9, 0, 0, 0 ],
+    [ 0, 0, 9, 0, 0, 0, 4, 0, 0 ],
+    [ 8, 0, 4, 5, 0, 0, 0, 0, 9 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [ 0, 0, 0, 4, 3, 0, 0, 2, 7 ],
+    [ 2, 0, 6, 7, 1, 0, 0, 0, 3 ]
   ]
 
   const n = 9
@@ -189,6 +189,16 @@ if (require.main === module) {
     {x: 1, y: 1},
     {x: 1, y: 2 + sqrt},
     {x: 2 + sqrt, y: 1},
-    {x: 2 + sqrt, y: 2 + sqrt},
+    {x: 2 + sqrt, y: 2 + sqrt}
   ]
+
+  const sudoku = new Sudoko(9, grid, subsectors)
+  console.log('sudoku:')
+  sudoku.print()
+  if (sudoku.solve()) {
+    console.log('solution:')
+    sudoku.print()
+  } else {
+    console.log('no solution')
+  }
 }
